@@ -9,41 +9,22 @@ import Feed from '../components/feed/Feed';
 import JobList from '../components/job-board/JobList';
 import MessageList from '../components/messaging/MessageList';
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    { path: '/',             element: <Login /> },
+    { path: '/login',        element: <Login /> },
+    { path: '/signup',       element: <Signup /> },
+    { path: '/feed',         element: <Feed /> },
+    { path: '/profile',      element: <ProfileView /> },
+    { path: '/profile/edit', element: <ProfileEdit /> },
+    { path: '/posts/create', element: <PostCreate /> },
+    { path: '/posts',        element: <PostList /> },
+    { path: '/jobs',         element: <JobList /> },
+    { path: '/messages',     element: <MessageList /> },
+  ],
   {
-    path: '/',
-    element: <Login />,
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/signup',
-    element: <Signup />,
-  },
-  {
-    path: '/profile',
-    element: <ProfileView />,
-  },
-  {
-    path: '/profile/edit',
-    element: <ProfileEdit />,
-  },
-  {
-    path: '/posts/create',
-    element: <PostCreate />,
-  },
-  {
-    path: '/posts',
-    element: <PostList />,
-  },
-  {
-    path: '/jobs',
-    element: <JobList />,
-  },
-  {
-    path: '/messages',
-    element: <MessageList />,
-  },
-]); 
+    future: {
+      v7_startTransition: true,
+    },
+  }
+);

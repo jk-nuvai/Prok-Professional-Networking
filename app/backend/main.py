@@ -1,40 +1,44 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 from flask_cors import CORS
-from config import Config
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Import models
-from models.user import User, db as user_db
-from models.profile import Profile, Skill, Experience, Education, db as profile_db
+from config import Config
+from models.user import db
 
-# Create Flask app
-app = Flask(__name__)
-app.config.from_object(Config)
+# Optional models that may not be implemented yet
+try:
+    from models.profile import Profile  # noqa: F401
+except ImportError:
+    Profile = None
 
-# Initialize extensions
-CORS(app)
+migrate = Migrate()
+jwt     = JWTManager()
 
-# Initialize database
-db = SQLAlchemy(app)
 
-def setup_database():
-    """Setup database tables"""
-    with app.app_context():
-        db.create_all()
-        print("✅ Database tables created successfully!")
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-# Create a function to initialize the app
-def create_app():
-    """Application factory function"""
+    # Extensions
+    db.init_app(app)
+    migrate.init_app(app, db)
+    jwt.init_app(app)
+    CORS(app, resources={r'/api/*': {'origins': '*'}})
+
+    # Blueprints
+    from api.auth import auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/api')
+
     return app
 
+
+app = create_app()
+
+
 if __name__ == '__main__':
-    # Setup database tables
-    setup_database()
-    
-    # Run the app
-    app.run(debug=True) 
+    app.run(debug=True)
